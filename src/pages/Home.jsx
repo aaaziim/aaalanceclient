@@ -1,12 +1,15 @@
-import React from 'react'
+ 
 import Carousel from '../components/Carousel'
 import CategoriesTab from '../components/CategoriesTab'
+import { useLoaderData } from 'react-router-dom'
 
 const Home = () => {
+  const jobs = useLoaderData() 
   return (
     <div>
+       
         <Carousel></Carousel>
-        <CategoriesTab></CategoriesTab>
+        <CategoriesTab jobs={jobs}></CategoriesTab>
     </div>
   )
 }

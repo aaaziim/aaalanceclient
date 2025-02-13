@@ -1,7 +1,7 @@
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import JobCard from './JobCard';
-const CategoriesTab = () => {
+const CategoriesTab = ({jobs}) => {
   return (
     <div className='container my-6 mx-auto py-6'>
         <Tabs>
@@ -11,21 +11,42 @@ const CategoriesTab = () => {
            
           <TabList >
                  <Tab>Web Development</Tab>
+                 <Tab>Graphics Design</Tab>
                  <Tab>Digital Marketing</Tab>
-                 <Tab>VIdeo Editing</Tab>
             </TabList>
 
           </div>
-            <TabPanel>
-               <JobCard></JobCard>
+
+          <TabPanel>
+            <div className='grid  grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4 mt-8'>
+            {
+             jobs.filter(job=>job.category === 'Web Development').map(job=><JobCard key={job._id} job={job}></JobCard>)
+            }
+            </div>
+            
+              
          </TabPanel>
+
+
          <TabPanel>
-         <JobCard></JobCard>
+         <div className='grid  grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4 mt-8'>
+            {
+             jobs.filter(job=>job.category === 'Graphics Design').map(job=><JobCard key={job._id} job={job}></JobCard>)
+            }
+            </div>
+            
          </TabPanel>
+
+
          <TabPanel>
-         <JobCard></JobCard>
-         <JobCard></JobCard>
+         <div className='grid  grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4 mt-8'>
+            {
+             jobs.filter(job=>job.category === 'Digital Marketing').map(job=><JobCard key={job._id} job={job}></JobCard>)
+            }
+            </div>
          </TabPanel>
+
+
         </Tabs>
         
     </div>
