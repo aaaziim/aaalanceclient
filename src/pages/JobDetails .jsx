@@ -1,7 +1,10 @@
 import { useContext } from "react";
 import { useLoaderData } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
-
+import  { useState } from "react";
+import DatePicker from "react-datepicker";
+import axios from 'axios'
+import "react-datepicker/dist/react-datepicker.css";
 const JobDetails = () => {
 
     const {user} = useContext(AuthContext)
@@ -10,7 +13,43 @@ const JobDetails = () => {
 
     const {job_title,_id,  category, deadline, description, max_price, min_price, buyer_email} = job;
 
-    console.log(job)
+
+    const [startDate, setStartDate] = useState(new Date());
+
+
+    const handleSubmitBid = async (e) =>{
+        e.preventDefault();
+        const form = e.target;
+        const jobId =  _id;
+        const jobTitle = job_title;
+        const price = form.price.value;
+        const email = form.email.value;
+        const comment = form.comment.value;
+        const completionDeadline = startDate;
+        const buyerEmail = buyer_email;
+        const status = 'pending';
+
+        const bidData = {
+            jobId,
+            jobTitle,
+            price,
+            email,
+            comment,
+            completionDeadline,
+            buyerEmail,
+            status,
+        }
+
+       try{
+        const {data} = await axios.post(`${import.meta.env.VITE_API_URL}/bids`, bidData)
+        console.log(data)
+       } catch(err){
+          console.log(err)
+       }
+ 
+    }
+
+    
     return (
       <div className='flex flex-col md:flex-row justify-around gap-5  items-center min-h-[calc(100vh-306px)] md:max-w-screen-xl mx-auto '>
         {/* Job Details */}
@@ -57,7 +96,7 @@ const JobDetails = () => {
             Place A Bid
           </h2>
   
-          <form>
+          <form onSubmit={handleSubmitBid}>
             <div className='grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2'>
               <div>
                 <label className='text-gray-700 ' htmlFor='price'>
@@ -100,6 +139,8 @@ const JobDetails = () => {
                 <label className='text-gray-700'>Deadline</label>
   
                 {/* Date Picker Input Field */}
+
+                <DatePicker className="block w-full px-4 py-2  text-gray-700 bg-white border border-gray-200 rounded-md   focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring" selected={startDate} onChange={(date) => setStartDate(date)} />
               </div>
             </div>
   

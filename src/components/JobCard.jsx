@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const JobCard = ({job}) => {
   const {job_title,_id,  category, deadline, description, max_price, min_price} = job;
-  console.log(job)
+ 
     return (
       <Link to={`/jobs/${_id}`} className='w-full max-w-sm px-4 py-3 m-4 bg-white rounded-md shadow-md hover:scale-[1.05] transition-all'>
         <div className='flex items-center justify-between'>
