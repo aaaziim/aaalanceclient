@@ -5,24 +5,36 @@ import  { useState } from "react";
 import DatePicker from "react-datepicker";
 import axios from 'axios'
 import "react-datepicker/dist/react-datepicker.css";
+import toast from 'react-hot-toast';
+
+
 const JobDetails = () => {
 
     const {user} = useContext(AuthContext)
 
     const job = useLoaderData()
 
-    const {job_title,_id,  category, deadline, description, max_price, min_price, buyer_email} = job;
+    const {job_title,_id,  category, deadline, description, max_price, min_price, buyer_email, buyer} = job;
 
 
     const [startDate, setStartDate] = useState(new Date());
 
 
     const handleSubmitBid = async (e) =>{
+
+     
         e.preventDefault();
+
         const form = e.target;
-        const jobId =  _id;
-        const jobTitle = job_title;
+        const jobId =  _id; 
         const price = form.price.value;
+
+        if(price<parseInt(min_price)) return toast.error("Offer Price Must be Greater or Equal to Minimum Price")
+
+        if(price>parseInt(max_price)) return toast.error("Offer Price Must be Less or Equal to Maximum Price")
+
+
+
         const email = form.email.value;
         const comment = form.comment.value;
         const completionDeadline = startDate;
@@ -31,8 +43,9 @@ const JobDetails = () => {
 
         const bidData = {
             jobId,
-            jobTitle,
+            job_title,
             price,
+            category,
             email,
             comment,
             completionDeadline,
@@ -56,7 +69,7 @@ const JobDetails = () => {
         <div className='flex-1  px-4 py-7 bg-white rounded-md shadow-md md:min-h-[350px]'>
           <div className='flex items-center justify-between'>
             <span className='text-sm font-light text-gray-800 '>
-              Deadline: {deadline}
+              Deadline: {new Date(deadline).toLocaleDateString()}
             </span>
             <span className='px-4 py-1 text-xs text-blue-800 uppercase bg-blue-200 rounded-full '>
             {category}
@@ -74,9 +87,11 @@ const JobDetails = () => {
             <p className='mt-6 text-sm font-bold text-gray-600 '>
               Buyer Details:
             </p>
-            <div className='flex items-center gap-5'>
+            <div className='flex items-center gap-5 '>
+              
               <div>
-                <p className='mt-2 text-sm  text-gray-600 '>Name: Jhankar Vai.</p>
+              <img className="rounded-full w-12" src={buyer?.photo} alt="" />
+                <p className='mt-2 text-sm  text-gray-600 '>Name: {buyer?.name}</p>
                 <p className='mt-2 text-sm  text-gray-600 '>
                   Email: {buyer_email}
                 </p>
@@ -95,8 +110,9 @@ const JobDetails = () => {
           <h2 className='text-lg font-semibold text-gray-700 capitalize '>
             Place A Bid
           </h2>
-  
-          <form onSubmit={handleSubmitBid}>
+
+          {
+            user?.email != buyer_email ? <form onSubmit={handleSubmitBid}>
             <div className='grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2'>
               <div>
                 <label className='text-gray-700 ' htmlFor='price'>
@@ -152,7 +168,10 @@ const JobDetails = () => {
                 Place Bid
               </button>
             </div>
-          </form>
+          </form> : "You can't bid on your own job"
+          }
+  
+          
         </section>
       </div>
     )
