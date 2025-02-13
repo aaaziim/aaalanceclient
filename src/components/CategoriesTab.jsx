@@ -1,5 +1,6 @@
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import JobCard from './JobCard';
 const CategoriesTab = () => {
   return (
     <div className='container my-6 mx-auto py-6'>
@@ -16,13 +17,14 @@ const CategoriesTab = () => {
 
           </div>
             <TabPanel>
-                <h2>Any content 1</h2>
+               <JobCard></JobCard>
          </TabPanel>
          <TabPanel>
-                <h2>Any content 2</h2>
+         <JobCard></JobCard>
          </TabPanel>
          <TabPanel>
-                <h2>Any content 3</h2>
+         <JobCard></JobCard>
+         <JobCard></JobCard>
          </TabPanel>
         </Tabs>
         
