@@ -3,6 +3,7 @@ import Main from "../layouts/Main";
 import Home from "../pages/Home";
 import Registration from "../pages/Authentication/Registration";
 import Login from "../pages/Authentication/Login";
+import JobDetails from "../pages/JobDetails ";
 
 
 const routes = createBrowserRouter([
@@ -22,10 +23,12 @@ const routes = createBrowserRouter([
             {
                 path: "/registration",
                 element:<Registration></Registration>
-            }, {
-                path: "/",
-                element:<Home></Home>
-            }
+            },
+            {
+                path: "/jobs/:id",
+                element:<JobDetails></JobDetails>,
+                loader: ({params})=> fetch(`${import.meta.env.VITE_API_URL}/jobs/${params.id}`)
+            },
         ]
     },
 
