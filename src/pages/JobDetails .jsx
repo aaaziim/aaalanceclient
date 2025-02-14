@@ -3,8 +3,9 @@ import { useLoaderData } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
 import  { useState } from "react";
 import DatePicker from "react-datepicker";
-import axios from 'axios'
 import "react-datepicker/dist/react-datepicker.css";
+import axios from 'axios'
+
 import toast from 'react-hot-toast';
 
 
@@ -14,7 +15,7 @@ const JobDetails = () => {
 
     const job = useLoaderData()
 
-    const {job_title,_id,  category, deadline, description, max_price, min_price, buyer_email, buyer} = job;
+    const {job_title,_id,  category, deadline, description, max_price, min_price, buyer} = job;
 
 
     const [startDate, setStartDate] = useState(new Date());
@@ -38,7 +39,7 @@ const JobDetails = () => {
         const email = form.email.value;
         const comment = form.comment.value;
         const completionDeadline = startDate;
-        const buyerEmail = buyer_email;
+        const buyer_email = buyer?.email;
         const status = 'pending';
 
         const bidData = {
@@ -49,7 +50,7 @@ const JobDetails = () => {
             email,
             comment,
             completionDeadline,
-            buyerEmail,
+            buyer_email,
             status,
         }
 
@@ -93,7 +94,7 @@ const JobDetails = () => {
               <img className="rounded-full w-12" src={buyer?.photo} alt="" />
                 <p className='mt-2 text-sm  text-gray-600 '>Name: {buyer?.name}</p>
                 <p className='mt-2 text-sm  text-gray-600 '>
-                  Email: {buyer_email}
+                  Email: {buyer?.email}
                 </p>
               </div>
               <div className='rounded-full object-cover overflow-hidden w-14 h-14'>
@@ -112,7 +113,7 @@ const JobDetails = () => {
           </h2>
 
           {
-            user?.email != buyer_email ? <form onSubmit={handleSubmitBid}>
+            user?.email != buyer?.email ? <form onSubmit={handleSubmitBid}>
             <div className='grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2'>
               <div>
                 <label className='text-gray-700 ' htmlFor='price'>

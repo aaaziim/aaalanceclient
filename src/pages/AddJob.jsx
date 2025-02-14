@@ -32,13 +32,13 @@ const AddJob = () => {
 
     const newJob = {
       job_title,
-      buyer_email,
       deadline,
       category,
       min_price,
       max_price,
       description,
       buyer: {
+        email:buyer_email,
         name: user?.displayName,
         photo: user?.photoURL
       }
