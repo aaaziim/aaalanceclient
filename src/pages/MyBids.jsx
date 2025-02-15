@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios'
 import { AuthContext } from '../provider/AuthProvider';
+import toast from 'react-hot-toast';
 
 
 const MyBids = () => {
@@ -10,14 +11,32 @@ const MyBids = () => {
   const [bids, setBids] = useState([])
 
   useEffect(()=>{
-    const getData = async() =>{
-      const {data} = await axios(`${import.meta.env.VITE_API_URL}/bids/${user?.email}`)
-      setBids(data)
-    }
-
     getData()
   }, [user])
+  const getData = async() =>{
+    const {data} = await axios(`${import.meta.env.VITE_API_URL}/bids/${user?.email}`)
+    setBids(data)
+  }
 
+  const handleStatusUpdate = async (id, prevStatus, status) =>{
+    
+    
+      
+        try {
+          const { data } = await axios.patch(
+            `${import.meta.env.VITE_API_URL}/update-status/${id}`,
+            {status}
+          )
+          toast.success('Status Updated Successfully!!!')
+          getData()
+          // navigate('/my-jobs')
+        } catch (err) {
+          console.log(err)
+          toast.error(err.message)
+        }
+    
+      
+    }
 
     return (
       <section className='container px-4 mx-auto pt-12'>
@@ -113,6 +132,8 @@ const MyBids = () => {
                       </td>
                       <td className='px-4 py-4 text-sm whitespace-nowrap'>
                         <button
+                        onClick={()=>handleStatusUpdate(bid._id, bid.status, 'Complete' )} 
+                        disabled={['Complete', 'pending', 'Rejected'].includes(bid.status)}
                           title='Mark Complete'
                           className='text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none disabled:cursor-not-allowed'
                         >
