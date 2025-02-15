@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import bgImage from "../../assets/images/login.jpg"
 import logo from "../../assets/images/logo.png"
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../../provider/AuthProvider";
 import toast from "react-hot-toast";
 const Login = () => {
@@ -11,7 +11,14 @@ const Login = () => {
   const location = useLocation();
   const destination = location.state || "/"
 
-  const {signIn, signInWithGoogle} = useContext(AuthContext)
+  const {signIn, signInWithGoogle, user, loading} = useContext(AuthContext)
+
+  useEffect(()=>{
+      if(user){
+        navigate("/")
+      }
+  }, [navigate, user])
+
   const handleGoogleSignIn = async() =>{
 
     try {
@@ -40,6 +47,8 @@ const Login = () => {
       toast.error(err?.message)
     }
   }
+
+  if(user || loading) return
     return (
       <div className='flex justify-center items-center min-h-[calc(100vh-306px)] my-4'>
         <div className='flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg  lg:max-w-4xl '>
