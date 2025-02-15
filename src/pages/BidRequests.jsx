@@ -1,11 +1,36 @@
+import { useContext, useEffect, useState } from "react"
+import { AuthContext } from "../provider/AuthProvider"
+import axios from "axios"
+
 const BidRequests = () => {
+
+  const {user} = useContext(AuthContext)
+
+  const [bidRequests, setBidRequests] = useState([])
+
+  useEffect(()=>{
+    const getData = async() =>{
+      const {data} = await axios(`${import.meta.env.VITE_API_URL}/bid-request/${user?.email}`)
+      setBidRequests(data)
+    }
+
+    getData()
+  }, [user])
+
+ 
+
+
+
+
+
+
     return (
       <section className='container px-4 mx-auto pt-12'>
         <div className='flex items-center gap-x-3'>
           <h2 className='text-lg font-medium text-gray-800 '>Bid Requests</h2>
   
           <span className='px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full '>
-            05 Requests
+            {bidRequests.length} Requests
           </span>
         </div>
   
@@ -69,20 +94,22 @@ const BidRequests = () => {
                     </tr>
                   </thead>
                   <tbody className='bg-white divide-y divide-gray-200 '>
-                    <tr>
+
+                  {bidRequests.map(bid=>(
+                    <tr key={bid._id}>
                       <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                        Build Dynamic Website
+                      {bid.job_title}
                       </td>
                       <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                        example@gmail.com
-                      </td>
-  
-                      <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                        10/04/2024
+                       {bid.email}
                       </td>
   
                       <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                        $200
+                      {new Date(bid.completionDeadline).toLocaleDateString()}
+                      </td>
+  
+                      <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
+                      ${bid.price}
                       </td>
                       <td className='px-4 py-4 text-sm whitespace-nowrap'>
                         <div className='flex items-center gap-x-2'>
@@ -90,14 +117,14 @@ const BidRequests = () => {
                             className='px-3 py-1 rounded-full text-blue-500 bg-blue-100/60
                              text-xs'
                           >
-                            Web Development
+                            {bid.category}
                           </p>
                         </div>
                       </td>
                       <td className='px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap'>
                         <div className='inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/60 text-yellow-500'>
                           <span className='h-1.5 w-1.5 rounded-full bg-yellow-500'></span>
-                          <h2 className='text-sm font-normal '>Pending</h2>
+                          <h2 className='text-sm font-normal '>{bid.status}</h2>
                         </div>
                       </td>
                       <td className='px-4 py-4 text-sm whitespace-nowrap'>
@@ -138,6 +165,8 @@ const BidRequests = () => {
                         </div>
                       </td>
                     </tr>
+                  ))}
+                    
                   </tbody>
                 </table>
               </div>

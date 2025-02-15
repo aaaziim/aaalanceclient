@@ -50,8 +50,12 @@ const JobDetails = () => {
             email,
             comment,
             completionDeadline,
-            buyer_email,
             status,
+            buyer:{
+              email:buyer_email,
+              name: buyer.name,
+              photo: buyer.photo
+            }
         }
 
        try{
