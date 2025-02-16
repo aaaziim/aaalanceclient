@@ -1,17 +1,20 @@
-import { useContext, useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
 import axios from 'axios'
-import { AuthContext } from '../provider/AuthProvider';
+ 
 import { Link } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import useAxiosSecure from '../hooks/useAxiosSecure';
 
 
 const MyPostedJobs = () => {
 
-  const {user} = useContext(AuthContext)
+  const {user} = useAuth()
 
   const [jobs, setJobs] = useState([])
+  const axiosSecure = useAxiosSecure()
 
   const getData = async() =>{
-    const {data} = await axios(`${import.meta.env.VITE_API_URL}/jobs/${user?.email}`)
+    const {data} = await axiosSecure(`/jobs/${user?.email}`)
     setJobs(data)
   }
 
@@ -23,7 +26,7 @@ const MyPostedJobs = () => {
 
   const handleJobDelete = async(_id) =>{
     try{
-        const {data} = await axios.delete(`${import.meta.env.VITE_API_URL}/job/${_id}`)
+        const {data} = await axiosSecure.delete(`/job/${_id}`)
         getData()
         console.log(data)
        } catch(err){

@@ -1,30 +1,33 @@
-import { useContext, useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
 import axios from 'axios'
-import { AuthContext } from '../provider/AuthProvider';
+ 
 import toast from 'react-hot-toast';
+import useAuth from '../hooks/useAuth';
+import useAxiosSecure from '../hooks/useAxiosSecure';
 
 
 const MyBids = () => {
 
-  const {user} = useContext(AuthContext)
+  const {user} = useAuth()
 
   const [bids, setBids] = useState([])
+  const axiosSecure = useAxiosSecure()
 
   useEffect(()=>{
     getData()
   }, [user])
   const getData = async() =>{
-    const {data} = await axios(`${import.meta.env.VITE_API_URL}/bids/${user?.email}`)
+    const {data} = await axiosSecure(`/bids/${user?.email}` )
     setBids(data)
   }
 
   const handleStatusUpdate = async (id, prevStatus, status) =>{
-    
-    
-      
+
+    if(prevStatus === status) return toast.error("Not Allowed")
+  
         try {
-          const { data } = await axios.patch(
-            `${import.meta.env.VITE_API_URL}/update-status/${id}`,
+          const { data } = await axiosSecure.patch(
+            `/update-status/${id}`,
             {status}
           )
           toast.success('Status Updated Successfully!!!')

@@ -1,9 +1,10 @@
 import DatePicker from "react-datepicker";
 import axios from 'axios'
 import "react-datepicker/dist/react-datepicker.css";
-import { useContext, useState } from "react";
+import {   useState } from "react";
 import toast from "react-hot-toast";
-import { AuthContext } from "../provider/AuthProvider";
+ 
+import useAuth from "../hooks/useAuth";
 
 
 
@@ -12,7 +13,9 @@ import { AuthContext } from "../provider/AuthProvider";
 
 const AddJob = () => {
 
-  const {user} = useContext(AuthContext)
+  const {user} = useAuth()
+
+   
 
    const [startDate, setStartDate] = useState(new Date());
 

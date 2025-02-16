@@ -1,45 +1,75 @@
-import { useContext, useEffect, useState } from "react"
-import { AuthContext } from "../provider/AuthProvider"
-import axios from "axios"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import { useNavigate } from "react-router-dom"
-
+import useAuth from "../hooks/useAuth"
+import useAxiosSecure from "../hooks/useAxiosSecure"
+import { useMutation, useQuery} from '@tanstack/react-query'
 const BidRequests = () => {
 
-  const {user} = useContext(AuthContext)
-  const navigate = useNavigate()
+  const {user} = useAuth() 
+  const axiosSecure = useAxiosSecure()
 
-  const [bidRequests, setBidRequests] = useState([])
-
-  useEffect(()=>{
-    getData()
-  }, [user])
 
   const getData = async() =>{
-    const {data} = await axios(`${import.meta.env.VITE_API_URL}/bid-request/${user?.email}`)
-    setBidRequests(data)
+    const {data} = await axiosSecure(`/bid-request/${user?.email}`)
+    // setBidRequests(data)
+    return data 
   }
+
+  const {data:bids=[], 
+    isLoading, 
+    refetch, 
+    isError, 
+    error
+  } = useQuery({ 
+    queryFn:  getData,
+    queryKey: ['bids'], 
+  })
+
+
+  // const queryClient = useQueryClient()
+
+
+
+  // const [bidRequests, setBidRequests] = useState([])
+
+  // useEffect(()=>{
+  //   getData()
+  // }, [user])
+
+
+  const { mutateAsync } = useMutation({
+    mutationFn: async ({id, status})=>{
+      const { data } = await axiosSecure.patch(
+        `/update-status/${id}`,
+        {status}
+      )
+      return data
+    },
+    onSuccess:()=>{
+      console.log("Updated");
+      toast.success("Updated")
+      refetch()
+    }
+
+  })
+  
 
   const handleStatusUpdate = async (id, prevStatus, status) =>{
     
     if(prevStatus === status) return toast.error("Not Allowed")
-      try {
-        const { data } = await axios.patch(
-          `${import.meta.env.VITE_API_URL}/update-status/${id}`,
-          {status}
-        )
-        toast.success('Status Updated Successfully!!!')
-        getData()
+    
+        await mutateAsync({id, status})
         // navigate('/my-jobs')
-      } catch (err) {
-        console.log(err)
-        toast.error(err.message)
-      }
+      
     }
      
 
   
- 
+ if(isLoading) return <p>Still Loading.............</p>
+
+ if(isError || error) {
+  console.log(isError,error)
+ }
 
 
 
@@ -52,7 +82,7 @@ const BidRequests = () => {
           <h2 className='text-lg font-medium text-gray-800 '>Bid Requests</h2>
   
           <span className='px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full '>
-            {bidRequests.length} Requests
+            {bids.length} Requests
           </span>
         </div>
   
@@ -117,7 +147,7 @@ const BidRequests = () => {
                   </thead>
                   <tbody className='bg-white divide-y divide-gray-200 '>
 
-                  {bidRequests.map(bid=>(
+                  {bids.map(bid=>(
                     <tr key={bid._id}>
                       <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
                       {bid.job_title}
@@ -152,7 +182,7 @@ const BidRequests = () => {
                       <td className='px-4 py-4 text-sm whitespace-nowrap'>
                         <div className='flex items-center gap-x-6'>
                           <button onClick={()=>handleStatusUpdate(bid._id, bid.status, 'In Progress' )} 
-                          disabled={['Complete',  'Rejected'].includes(bid.status)}
+                          disabled={['Complete', 'In Progress',  'Rejected'].includes(bid.status)}
                           className='text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none disabled:cursor-not-allowed'>
                             <svg
                               xmlns='http://www.w3.org/2000/svg'
@@ -173,7 +203,7 @@ const BidRequests = () => {
 
                           <button 
                           onClick={()=>handleStatusUpdate(bid._id, bid.status, 'Rejected' )} 
-                          disabled={['Complete',  'Rejected'].includes(bid.status)}
+                          disabled={['Complete', 'In Progress',  'Rejected'].includes(bid.status)}
                           className='text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none  disabled:cursor-not-allowed'>
                             <svg
                               xmlns='http://www.w3.org/2000/svg'

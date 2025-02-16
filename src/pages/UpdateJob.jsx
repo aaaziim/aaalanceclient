@@ -1,15 +1,17 @@
 import axios from 'axios'
-import { useContext, useEffect, useState } from 'react'
+import {   useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useNavigate, useParams } from 'react-router-dom'
  
-import toast from 'react-hot-toast'
-import { AuthContext } from '../provider/AuthProvider'
+import toast from 'react-hot-toast' 
+import useAuth from '../hooks/useAuth'
+import useAxiosSecure from '../hooks/useAxiosSecure'
 
 const UpdateJob = () => {
   const navigate = useNavigate()
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
+  const axiosSecure = useAxiosSecure()
   const { id } = useParams()
   const [startDate, setStartDate] = useState(new Date())
   const [job, setJob] = useState({})
@@ -19,8 +21,8 @@ const UpdateJob = () => {
   }, [id])
 
   const fetchJobData = async () => {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_API_URL}/job/${id}`
+    const { data } = await axiosSecure.get(
+      `/job/${id}`
     )
     setJob(data)
     setStartDate(new Date(data.deadline))
@@ -53,8 +55,8 @@ const UpdateJob = () => {
     }
     try {
       // 1. make a post request
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/update/${id}`,
+      await axiosSecure.put(
+        `/update/${id}`,
         formData
       )
       // 2. Reset form
