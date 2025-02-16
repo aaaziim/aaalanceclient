@@ -22,7 +22,7 @@ const BidRequests = () => {
     error
   } = useQuery({ 
     queryFn:  getData,
-    queryKey: ['bids'], 
+    queryKey: ['bids', user?.email], 
   })
 
 

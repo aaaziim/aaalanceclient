@@ -66,8 +66,8 @@ const JobDetails = () => {
         console.log(data)
         toast.success("Bid Placed Successfully")
         navigate("/my-bids")
-       } catch(err){
-          console.log(err)
+       } catch(err){ 
+          toast.error(err.response.data)
        }
  
     }
