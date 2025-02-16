@@ -4,17 +4,28 @@ import JobCard from "../components/JobCard"
 
 const AllJobs = () => {
 
-  const [jobs, setJobs] = useState([])
+const [allJobs, setAllJobs] = useState([]);
+const [jobs, setJobs] = useState([]);
   const axiosSecure = useAxiosSecure()
 
   useEffect(()=>{
     const getData = async() =>{
       const {data} = await axiosSecure(`/jobs`)
-      setJobs(data)
+      setAllJobs(data);
+    setJobs(data);
     }
 
     getData()
   }, [])
+
+
+  const handleCategoryFilter = (cat) => {
+    if (!cat) {
+      setJobs(allJobs); // Reset to all jobs if no category selected
+    } else {
+      setJobs(allJobs.filter(job => job.category === cat));
+    }
+  };
 
 
 
@@ -29,11 +40,12 @@ const AllJobs = () => {
               name='category'
               id='category'
               className='border p-4 rounded-lg'
+              onChange={(e) => handleCategoryFilter(e.target.value)}
             >
-              <option value=''>Filter By Category</option>
-              <option value='Web Development'>Web Development</option>
-              <option value='Graphics Design'>Graphics Design</option>
-              <option value='Digital Marketing'>Digital Marketing</option>
+              <option onClick={()=>handleCategoryFilter("")} value=''>Filter By Category</option>
+              <option   value='Web Development'>Web Development</option>
+              <option  value='Graphics Design'>Graphics Design</option>
+              <option  value='Digital Marketing'>Digital Marketing</option>
             </select>
           </div>
 
